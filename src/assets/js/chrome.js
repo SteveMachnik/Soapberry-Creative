@@ -136,6 +136,11 @@
       });
       return () => window.removeEventListener("scroll", on);
     }, []);
+    const [menuOpen, setMenuOpen] = React.useState(false);
+    const goM = k => {
+      setMenuOpen(false);
+      go(k);
+    };
     // Over the Home hero (un-scrolled) the nav sits on near-black media: go inverse.
     const inverse = page === "home" && !scrolled;
     const link = (labelText, key) => {
@@ -199,11 +204,51 @@
         display: "flex",
         alignItems: "center",
         gap: "28px"
-      }
+      },
+      className: "sb-nav-desktop"
     }, NAV_LINKS.map(([t, k]) => link(t, k)), /*#__PURE__*/React.createElement(Button, {
       variant: inverse ? "inverse" : "primary",
       onClick: () => go("contact")
-    }, "Book a call"))));
+    }, "Book a call")), /*#__PURE__*/React.createElement("button", {
+      className: "sb-nav-toggle" + (menuOpen ? " open" : ""),
+      "aria-label": "Menu",
+      "aria-expanded": menuOpen ? "true" : "false",
+      onClick: () => setMenuOpen(o => !o)
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        backgroundColor: inverse ? "var(--white)" : "var(--text-display)"
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        backgroundColor: inverse ? "var(--white)" : "var(--text-display)"
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        backgroundColor: inverse ? "var(--white)" : "var(--text-display)"
+      }
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "sb-nav-menu" + (menuOpen ? " open" : "")
+    }, /*#__PURE__*/React.createElement("a", {
+      href: "#/home",
+      onClick: e => {
+        e.preventDefault();
+        goM("home");
+      }
+    }, "Home"), NAV_LINKS.map(([t, k]) => /*#__PURE__*/React.createElement("a", {
+      key: k,
+      href: "#/" + k,
+      onClick: e => {
+        e.preventDefault();
+        goM(k);
+      }
+    }, t)), /*#__PURE__*/React.createElement("a", {
+      href: "#/contact",
+      className: "sb-nav-cta",
+      onClick: e => {
+        e.preventDefault();
+        goM("contact");
+      }
+    }, "Book a call")));
   }
 
   /* ---------- Footer ---------- */
