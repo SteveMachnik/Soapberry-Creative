@@ -298,6 +298,14 @@ body.sb {
   margin: 0;
 }
 
+/* "Classical Romance" auto-swaps word-final e/l for a swash alternate via
+   its contextual-alternates (calt) OpenType feature. Disable that so
+   headlines render the plain letterforms instead. */
+h1, h2, h3, .sb-display {
+  font-feature-settings: "calt" 0;
+  font-variant-ligatures: none;
+}
+
 .sb-label {
   white-space: nowrap;
   font-family: var(--font-label);
