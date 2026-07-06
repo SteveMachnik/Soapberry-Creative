@@ -1,0 +1,8 @@
+{
+  "name": "soapberry-creative-website",
+  "version": "1.0.0",
+  "description": "Soapberry Creative website",
+  "scripts": {
+    "build": "mkdir -p public && cp src/index.html public/index.html && echo 'Build complete'"
+  }
+}
