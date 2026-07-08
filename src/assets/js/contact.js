@@ -16,6 +16,37 @@
   } = window;
   function Contact() {
     const [sent, setSent] = React.useState(false);
+    const [sending, setSending] = React.useState(false);
+    const [error, setError] = React.useState("");
+    async function handleSubmit(e) {
+      e.preventDefault();
+      if (sending) return;
+      const fd = new FormData(e.target);
+      const payload = {
+        name: fd.get("name") || "",
+        email: fd.get("email") || "",
+        business: fd.get("business") || "",
+        interest: fd.get("interest") || "",
+        budget: fd.get("budget") || "",
+        message: fd.get("message") || ""
+      };
+      setSending(true);
+      setError("");
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(body.error || "Something went wrong.");
+        setSent(true);
+      } catch (err) {
+        setError(err.message || "Something went wrong. Please email us directly.");
+      } finally {
+        setSending(false);
+      }
+    }
     return /*#__PURE__*/React.createElement("main", {
       "data-screen-label": "Contact"
     }, /*#__PURE__*/React.createElement(Section, {
@@ -88,10 +119,7 @@
       variant: "outline",
       onClick: () => setSent(false)
     }, "Send another")) : /*#__PURE__*/React.createElement("form", {
-      onSubmit: e => {
-        e.preventDefault();
-        setSent(true);
-      },
+      onSubmit: handleSubmit,
       style: {
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
@@ -99,27 +127,33 @@
       }
     }, /*#__PURE__*/React.createElement(Input, {
       label: "Your name",
+      name: "name",
       placeholder: "Jane Appleseed"
     }), /*#__PURE__*/React.createElement(Input, {
       label: "Email",
+      name: "email",
       type: "email",
       placeholder: "jane@business.com"
     }), /*#__PURE__*/React.createElement(Input, {
       label: "Business",
+      name: "business",
       placeholder: "Appleseed & Co.",
       style: {
         gridColumn: "1 / -1"
       }
     }), /*#__PURE__*/React.createElement(Select, {
       label: "Interested in",
+      name: "interest",
       placeholder: "Choose one",
       options: ["Website only", "Website + content retainer", "Content retainer only", "Not sure yet"]
     }), /*#__PURE__*/React.createElement(Select, {
       label: "Budget",
+      name: "budget",
       placeholder: "Select a range",
       options: ["Under $5k", "$5–15k", "$15k+"]
     }), /*#__PURE__*/React.createElement(Textarea, {
       label: "Tell us about the project",
+      name: "message",
       placeholder: "We're opening a second location and…",
       rows: 4,
       style: {
@@ -127,13 +161,23 @@
       }
     }), /*#__PURE__*/React.createElement("div", {
       style: {
-        gridColumn: "1 / -1"
+        gridColumn: "1 / -1",
+        display: "flex",
+        alignItems: "center",
+        gap: "20px",
+        flexWrap: "wrap"
       }
     }, /*#__PURE__*/React.createElement(Button, {
       variant: "primary",
       size: "lg",
-      arrow: true
-    }, "Send it"))))))));
+      arrow: !sending
+    }, sending ? "Sending…" : "Send it"), error ? /*#__PURE__*/React.createElement("span", {
+      role: "alert",
+      style: {
+        color: "var(--text-muted)",
+        fontSize: "14px"
+      }
+    }, error) : null)))))));
   }
   window.SBPages = Object.assign(window.SBPages || {}, {
     contact: Contact
